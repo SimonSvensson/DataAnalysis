@@ -98,7 +98,7 @@ public class Window {
 					File file = fileChooser.getSelectedFile();
 
 					try {
-						headsetData = (new DataHandler()).headsetAccMag(file, Integer.parseInt(textField_2.getText()));
+						headsetData = (new DataHandler()).accMag(file, Integer.parseInt(textField_2.getText()));
 					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -125,7 +125,7 @@ public class Window {
 					File file = fileChooser.getSelectedFile();
 					
 					try {
-						gsvData = (new DataHandler()).gsrAccMag(file, Integer.parseInt(textField_3.getText()), Integer.parseInt(textField_1.getText()));
+						gsvData = (new DataHandler()).accMag(file, Integer.parseInt(textField_3.getText()), Integer.parseInt(textField_1.getText()));
 					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

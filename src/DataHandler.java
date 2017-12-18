@@ -7,7 +7,7 @@ import java.util.List;
 
 public class DataHandler {
 
-	public List<Double> headsetAccelerometerMagnitude(List<String> time, List<String> x, List<String> y, List<String> z) {
+	public List<Double> accelerometerMagnitude(List<String> time, List<String> x, List<String> y, List<String> z, double conversionFactor) { //headset
 		
 		List<Double> accMag = new ArrayList<Double>();
 		
@@ -16,23 +16,20 @@ public class DataHandler {
 			
 			if (Integer.parseInt(time.get(i)) != 0) {
 				
-				for (int j = 0; j < (Integer.parseInt(time.get(i))-Integer.parseInt(time.get(i-1))-1); j++) {
-					
+				for (int j = 0; j < (Integer.parseInt(time.get(i)) - Integer.parseInt(time.get(i-1)) -1); j++) {
 					accMag.add(null);
-					
 				}
-				
 			}
 			
-			if (x.get(i) == null && y.get(i) == null && z.get(i)  == null) {
+			if (x.get(i) == null || y.get(i) == null || z.get(i)  == null) {
 				
 				accMag.add(null);
 				
 			} else if (x.get(i).length() > 0 && y.get(i).length() > 0 && z.get(i).length() > 0) {
 				
-				xAcc = Double.parseDouble(x.get(i).replaceAll(",", "."));
-				yAcc = Double.parseDouble(y.get(i).replaceAll(",", "."));
-				zAcc = Double.parseDouble(z.get(i).replaceAll(",", "."));
+				xAcc = Double.parseDouble(x.get(i).replaceAll(",", "."))*conversionFactor;
+				yAcc = Double.parseDouble(y.get(i).replaceAll(",", "."))*conversionFactor;
+				zAcc = Double.parseDouble(z.get(i).replaceAll(",", "."))*conversionFactor;
 				
 				totalAcc = Math.sqrt(Math.pow(xAcc, 2) + Math.pow(yAcc, 2) + Math.pow(zAcc, 2));
 				
@@ -46,7 +43,7 @@ public class DataHandler {
 		
 	}
 	
-public List<Double> gsrAccelerometerMagnitude(List<String> x, List<String> y, List<String> z, int sampleRate) {
+public List<Double> accelerometerMagnitude(List<String> x, List<String> y, List<String> z, int sampleRate, double conversionFactor) { //gsr
 		
 		List<Double> accMag = new ArrayList<Double>();
 		
@@ -55,15 +52,12 @@ public List<Double> gsrAccelerometerMagnitude(List<String> x, List<String> y, Li
 		int oldArrPos, arrPos;
 		for (int i = 2; i < x.size(); i++) {
 			
-			if (x.get(i) == null && y.get(i) == null && z.get(i)  == null) {
-				
+			if (x.get(i) == null || y.get(i) == null || z.get(i)  == null) {
 				accMag.add(null);
-				
 			} else if (x.get(i).length() > 0 && y.get(i).length() > 0 && z.get(i).length() > 0) {
-				
-				xAcc = Double.parseDouble(x.get(i))*9.82/64;
-				yAcc = Double.parseDouble(y.get(i))*9.82/64;
-				zAcc = Double.parseDouble(z.get(i))*9.82/64;
+				xAcc = Double.parseDouble(x.get(i).replaceAll(",", "."))*conversionFactor;
+				yAcc = Double.parseDouble(y.get(i).replaceAll(",", "."))*conversionFactor;
+				zAcc = Double.parseDouble(z.get(i).replaceAll(",", "."))*conversionFactor;
 				
 				totalAcc = Math.sqrt(Math.pow(xAcc, 2) + Math.pow(yAcc, 2) + Math.pow(zAcc, 2));
 				
@@ -74,44 +68,38 @@ public List<Double> gsrAccelerometerMagnitude(List<String> x, List<String> y, Li
 				
 					for (int j = oldArrPos; j < (arrPos - 1); j++) {
 						
-						accMag.add(null);
-						
+						accMag.add(null);	
 					}
-					
-				} 
-				
+				}
 				accMag.add(totalAcc);
-				pos += (1000.0/sampleRate);
-				
-			} 
-
+				pos += (1000.0/sampleRate);	
+			}
+		}
+		return accMag;
+	}
+	
+	public List<Double> accMag(File file, int accStartColumn) throws FileNotFoundException, IOException { //headset
+		
+		return accMag(file, accStartColumn, -1);
+	}
+	
+	public List<Double> accMag(File file, int accStartColumn, int sampleRate) throws FileNotFoundException, IOException { //gsr
+		
+		List<String> time = null;
+		List<Double> accelerationMag;
+		
+		if(sampleRate == -1){
+			time = (new FileHandler()).getColumn(file, 3);
 		}
 		
-		return accMag;
-		
-	}
-	
-	public List<Double> headsetAccMag(File file, int accStartColumn) throws FileNotFoundException, IOException {
-		
-		List<String> time = (new FileHandler()).getColumn(file, 3);
-		
-		List<String> x = (new FileHandler()).getColumn(file, accStartColumn);
-		List<String> y = (new FileHandler()).getColumn(file, accStartColumn + 1);
-		List<String> z = (new FileHandler()).getColumn(file, accStartColumn + 2);
-		
-		List<Double> accelerationMag = headsetAccelerometerMagnitude(time, x, y, z);
-		
-		return accelerationMag;
-		
-	}
-	
-	public List<Double> gsrAccMag(File file, int accStartColumn, int sampleRate) throws FileNotFoundException, IOException {
-
 		List<String> x = (new FileHandler()).getColumn(file, accStartColumn);		
 		List<String> y = (new FileHandler()).getColumn(file, accStartColumn + 1);
 		List<String> z = (new FileHandler()).getColumn(file, accStartColumn + 2);
 		
-		List<Double> accelerationMag = gsrAccelerometerMagnitude(x,y,z, sampleRate);
+		if(sampleRate > -1) // gsr
+			accelerationMag = accelerometerMagnitude(x,y,z, sampleRate, (9.81/64));
+		else 				// headset
+			accelerationMag = accelerometerMagnitude(time, x,y,z, 1);
 		
 		return accelerationMag;
 		
