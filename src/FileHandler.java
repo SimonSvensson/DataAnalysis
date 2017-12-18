@@ -27,8 +27,6 @@ public class FileHandler {
 				columnData.add(null);	
 			}	
 		}
-		for(int i = 0; i < columnData.size(); i++)
-			System.out.println(columnData.get(i));
 		return columnData;
     }
 }
