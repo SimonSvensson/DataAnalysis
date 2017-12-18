@@ -11,42 +11,24 @@ import java.util.List;
 public class FileHandler {
 	
 	public List<String> getColumn(File file, int columnNumber) throws FileNotFoundException, IOException {
-		
 		List<String> columnData = new ArrayList<String>();
 		
-		if (file.getName().contains(".csv")) {
-			
-			String dataRow ;
-			BufferedReader CSVFile = new BufferedReader(new FileReader(file));
-		    while ((dataRow = CSVFile.readLine()) != null) {
-		    	columnData.add(dataRow.split(",")[columnNumber]);
-		    }
-			
-		} else if (file.getName().contains(".tsv")) {
-		
-			BufferedReader in = new BufferedReader(
-		           new InputStreamReader(new FileInputStream(file), "UTF-16"));
-		
-			String line;
-			
-			while ((line = in.readLine()) != null) {
-				
-				if (line.split("\t").length > columnNumber) {
-					
-					columnData.add(line.split("\t")[columnNumber]);
-					
-				} else {
-					
-					columnData.add(null);
-					
-				}
-				
-			}
-			
+		String line, encoding = "UTF-8", delimiter = ","; // Default is .csv
+		if(file.getName().contains(".tsv")){
+			encoding = "UTF-16";
+			delimiter = "\t";
 		}
+		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
 
+		while ((line = in.readLine()) != null){
+			if (line.split(delimiter).length > columnNumber) {
+				columnData.add(line.split(delimiter)[columnNumber]);
+			} else {
+				columnData.add(null);	
+			}	
+		}
+		for(int i = 0; i < columnData.size(); i++)
+			System.out.println(columnData.get(i));
 		return columnData;
-
     }
-
 }
