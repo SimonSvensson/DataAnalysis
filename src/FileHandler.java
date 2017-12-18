@@ -24,8 +24,8 @@ public class FileHandler {
 			if (line.split(delimiter).length > columnNumber) {
 				columnData.add(line.split(delimiter)[columnNumber]);
 			} else {
-				columnData.add(null);	
-			}	
+				columnData.add(null);
+			}
 		}
 		return columnData;
     }

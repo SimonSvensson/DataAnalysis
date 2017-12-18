@@ -86,10 +86,10 @@ public class Window {
 		
 		JLabel lblSynkronisering = new JLabel("Calculate offset");
 		lblSynkronisering.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSynkronisering.setBounds(12, 13, 121, 16);
+		lblSynkronisering.setBounds(187, 18, 121, 16);
 		frame.getContentPane().add(lblSynkronisering);
 		
-		JButton btnNewButton = new JButton("Headset Data");
+		JButton btnNewButton = new JButton("Headset File");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -113,11 +113,11 @@ public class Window {
 				
 			}
 		});
-		btnNewButton.setBounds(12, 42, 121, 25);
+		btnNewButton.setBounds(12, 76, 121, 25);
 		frame.getContentPane().add(btnNewButton);
 		
-		JButton button = new JButton("GSV Data");
-		button.addActionListener(new ActionListener() {
+		JButton btnGsvFile = new JButton("GSV File");
+		btnGsvFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				JFileChooser fileChooser = new JFileChooser();
@@ -140,25 +140,25 @@ public class Window {
 				
 			}
 		});
-		button.setBounds(12, 76, 121, 25);
-		frame.getContentPane().add(button);
+		btnGsvFile.setBounds(12, 113, 121, 25);
+		frame.getContentPane().add(btnGsvFile);
 		
 		JLabel lblSampleRate = new JLabel("Sample rate");
 		lblSampleRate.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSampleRate.setBounds(145, 13, 87, 16);
+		lblSampleRate.setBounds(145, 46, 87, 16);
 		frame.getContentPane().add(lblSampleRate);
 		
 		final JLabel lblOffset = new JLabel("Offset: ");
 		lblOffset.setVerticalAlignment(SwingConstants.TOP);
 		lblOffset.setHorizontalAlignment(SwingConstants.LEFT);
-		lblOffset.setBounds(370, 80, 118, 16);
+		lblOffset.setBounds(367, 116, 118, 16);
 		frame.getContentPane().add(lblOffset);
 		
 		textField = new JTextField();
 		textField.setEditable(false);
 		textField.setHorizontalAlignment(SwingConstants.CENTER);
 		textField.setText("120");
-		textField.setBounds(145, 42, 87, 25);
+		textField.setBounds(145, 74, 87, 25);
 		frame.getContentPane().add(textField);
 		textField.setColumns(10);
 		
@@ -167,7 +167,7 @@ public class Window {
 		textField_1.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_1.setText("32");
 		textField_1.setColumns(10);
-		textField_1.setBounds(145, 76, 87, 25);
+		textField_1.setBounds(145, 111, 87, 25);
 		frame.getContentPane().add(textField_1);
 		
 		JButton btnNewButton_1 = new JButton("Calculate");
@@ -208,26 +208,26 @@ public class Window {
 				
 			}
 		});
-		btnNewButton_1.setBounds(367, 42, 121, 25);
+		btnNewButton_1.setBounds(367, 76, 121, 25);
 		frame.getContentPane().add(btnNewButton_1);
 		
 		JLabel lblStartColumnAcc = new JLabel("Acc Start Column");
 		lblStartColumnAcc.setHorizontalAlignment(SwingConstants.CENTER);
-		lblStartColumnAcc.setBounds(244, 13, 111, 16);
+		lblStartColumnAcc.setBounds(244, 46, 111, 16);
 		frame.getContentPane().add(lblStartColumnAcc);
 		
 		textField_2 = new JTextField();
 		textField_2.setText("7");
 		textField_2.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_2.setColumns(10);
-		textField_2.setBounds(244, 42, 111, 25);
+		textField_2.setBounds(244, 74, 111, 25);
 		frame.getContentPane().add(textField_2);
 		
 		textField_3 = new JTextField();
 		textField_3.setText("0");
 		textField_3.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_3.setColumns(10);
-		textField_3.setBounds(244, 76, 111, 25);
+		textField_3.setBounds(244, 111, 111, 25);
 		frame.getContentPane().add(textField_3);
 		
 		JPanel panel = new JPanel();
@@ -237,129 +237,129 @@ public class Window {
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBackground(Color.BLACK);
-		panel_1.setBounds(12, 120, 476, 1);
+		panel_1.setBounds(12, 151, 476, 1);
 		frame.getContentPane().add(panel_1);
 		
 		JLabel lblNewLabel = new JLabel("Export file");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(12, 239, 121, 22);
+		lblNewLabel.setBounds(12, 270, 121, 22);
 		frame.getContentPane().add(lblNewLabel);
 		
-		JButton btnNewButton_2 = new JButton("Data");
-		btnNewButton_2.setBounds(145, 238, 121, 25);
+		JButton btnNewButton_2 = new JButton("Choose");
+		btnNewButton_2.setBounds(145, 270, 121, 25);
 		frame.getContentPane().add(btnNewButton_2);
 		
 		JLabel lblPeriod = new JLabel("Duration");
 		lblPeriod.setHorizontalAlignment(SwingConstants.CENTER);
-		lblPeriod.setBounds(12, 160, 121, 25);
+		lblPeriod.setBounds(12, 198, 121, 25);
 		frame.getContentPane().add(lblPeriod);
 		
 		txtS = new JTextField();
 		txtS.setHorizontalAlignment(SwingConstants.CENTER);
 		txtS.setText("10 s");
-		txtS.setBounds(145, 160, 121, 25);
+		txtS.setBounds(145, 197, 121, 25);
 		frame.getContentPane().add(txtS);
 		txtS.setColumns(10);
 		
 		JLabel lblTo = new JLabel("to");
 		lblTo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTo.setBounds(272, 160, 93, 25);
+		lblTo.setBounds(272, 198, 93, 25);
 		frame.getContentPane().add(lblTo);
 		
 		txtS_1 = new JTextField();
 		txtS_1.setText("100 s");
 		txtS_1.setHorizontalAlignment(SwingConstants.CENTER);
 		txtS_1.setColumns(10);
-		txtS_1.setBounds(370, 161, 121, 25);
+		txtS_1.setBounds(367, 197, 121, 25);
 		frame.getContentPane().add(txtS_1);
 		
 		JLabel lblChunkSize = new JLabel("Chunk Size");
 		lblChunkSize.setHorizontalAlignment(SwingConstants.CENTER);
-		lblChunkSize.setBounds(12, 198, 121, 25);
+		lblChunkSize.setBounds(12, 233, 121, 25);
 		frame.getContentPane().add(lblChunkSize);
 		
 		txtS_2 = new JTextField();
 		txtS_2.setText("10 s");
 		txtS_2.setHorizontalAlignment(SwingConstants.CENTER);
 		txtS_2.setColumns(10);
-		txtS_2.setBounds(145, 199, 121, 25);
+		txtS_2.setBounds(145, 237, 121, 25);
 		frame.getContentPane().add(txtS_2);
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBackground(Color.BLACK);
-		panel_2.setBounds(12, 280, 476, 1);
+		panel_2.setBounds(12, 307, 476, 1);
 		frame.getContentPane().add(panel_2);
 		
 		JLabel lblExportSettings = new JLabel("Export Settings");
 		lblExportSettings.setHorizontalAlignment(SwingConstants.CENTER);
-		lblExportSettings.setBounds(12, 288, 476, 22);
+		lblExportSettings.setBounds(12, 307, 476, 22);
 		frame.getContentPane().add(lblExportSettings);
 		
 		JLabel lblFileInput = new JLabel("File input");
 		lblFileInput.setHorizontalAlignment(SwingConstants.CENTER);
-		lblFileInput.setBounds(12, 129, 476, 22);
+		lblFileInput.setBounds(12, 164, 476, 22);
 		frame.getContentPane().add(lblFileInput);
 		
 		JCheckBox chckbxNewCheckBox = new JCheckBox("Average");
 		chckbxNewCheckBox.setSelected(true);
 		chckbxNewCheckBox.setHorizontalAlignment(SwingConstants.LEFT);
-		chckbxNewCheckBox.setBounds(12, 345, 127, 25);
+		chckbxNewCheckBox.setBounds(12, 375, 127, 25);
 		frame.getContentPane().add(chckbxNewCheckBox);
 		
 		JLabel lblDataType = new JLabel("Data type");
 		lblDataType.setHorizontalAlignment(SwingConstants.CENTER);
-		lblDataType.setBounds(12, 316, 121, 22);
+		lblDataType.setBounds(12, 341, 121, 22);
 		frame.getContentPane().add(lblDataType);
 		
 		JLabel lblColumn = new JLabel("Column");
 		lblColumn.setHorizontalAlignment(SwingConstants.CENTER);
-		lblColumn.setBounds(145, 318, 121, 22);
+		lblColumn.setBounds(145, 341, 121, 22);
 		frame.getContentPane().add(lblColumn);
 		
 		textField_4 = new JTextField();
 		textField_4.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_4.setText("1");
-		textField_4.setBounds(145, 348, 121, 22);
+		textField_4.setBounds(145, 377, 121, 22);
 		frame.getContentPane().add(textField_4);
 		textField_4.setColumns(10);
 		
-		JCheckBox chckbxMaxiumValue = new JCheckBox("Maximum Value");
+		JCheckBox chckbxMaxiumValue = new JCheckBox("Max Value");
 		chckbxMaxiumValue.setSelected(true);
 		chckbxMaxiumValue.setHorizontalAlignment(SwingConstants.LEFT);
-		chckbxMaxiumValue.setBounds(12, 375, 127, 25);
+		chckbxMaxiumValue.setBounds(12, 405, 127, 25);
 		frame.getContentPane().add(chckbxMaxiumValue);
 		
 		textField_5 = new JTextField();
 		textField_5.setText("2");
 		textField_5.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_5.setColumns(10);
-		textField_5.setBounds(145, 378, 121, 22);
+		textField_5.setBounds(145, 407, 121, 22);
 		frame.getContentPane().add(textField_5);
 		
 		JCheckBox chckbxSkewness = new JCheckBox("Skewness ");
 		chckbxSkewness.setSelected(true);
 		chckbxSkewness.setHorizontalAlignment(SwingConstants.LEFT);
-		chckbxSkewness.setBounds(12, 405, 127, 25);
+		chckbxSkewness.setBounds(12, 439, 127, 25);
 		frame.getContentPane().add(chckbxSkewness);
 		
 		textField_6 = new JTextField();
 		textField_6.setText("3");
 		textField_6.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_6.setColumns(10);
-		textField_6.setBounds(145, 408, 121, 22);
+		textField_6.setBounds(145, 441, 121, 22);
 		frame.getContentPane().add(textField_6);
 		
-		JCheckBox chckbxStandardDeviation = new JCheckBox("SD");
+		JCheckBox chckbxStandardDeviation = new JCheckBox("Std Dev");
 		chckbxStandardDeviation.setSelected(true);
 		chckbxStandardDeviation.setHorizontalAlignment(SwingConstants.LEFT);
-		chckbxStandardDeviation.setBounds(12, 435, 127, 25);
+		chckbxStandardDeviation.setBounds(12, 472, 127, 25);
 		frame.getContentPane().add(chckbxStandardDeviation);
 		
 		textField_7 = new JTextField();
 		textField_7.setText("4");
 		textField_7.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_7.setColumns(10);
-		textField_7.setBounds(145, 438, 121, 22);
+		textField_7.setBounds(145, 474, 121, 22);
 		frame.getContentPane().add(textField_7);
 		
 		JButton btnExportData = new JButton("Export Data");
