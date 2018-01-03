@@ -30,7 +30,6 @@ import javax.swing.JSeparator;
 import java.awt.Color;
 import javax.swing.JCheckBox;
 
-
 public class Window {
 
 	private JFrame frame;
@@ -43,6 +42,10 @@ public class Window {
 	
 	List<Double> gsvData = new ArrayList<Double>();
 	List<Double> headsetData = new ArrayList<Double>();
+
+	//The data that is to be analyzed
+	List<Double> data = new ArrayList<Double>();
+	
 	private JTextField txtS;
 	private JTextField txtS_1;
 	private JTextField txtS_2;
@@ -180,13 +183,39 @@ public class Window {
 					boolean result = Files.deleteIfExists(file.toPath());
 					
 					PrintWriter writer = new PrintWriter(file, "UTF-8");
+					
+					double headSum = 0;
+					int count = 0;
+					for (int a = 0; a < headsetData.size(); a++) {
+						if (headsetData.get(a) != null) {
+							headSum+=headsetData.get(a);
+							count++;
+						}
+					}
+					double headAvg = headSum/count;
+					
+					double gsvSum = 0;
+					count = 0;
+					for (int a = 0; a < gsvData.size(); a++) {
+						if (gsvData.get(a) != null) {
+							gsvSum+=gsvData.get(a);
+							count++;
+						}
+					}
+					double gsvAvg = gsvSum/count;
+					
+					
 					for (int i = 0; i < 50000; i++) {
 						
 						Double hData = headsetData.get(i);
 						Double gData = gsvData.get(i);
 						
+						if (hData != null) hData = Math.abs(hData - headAvg);
+						if (gData != null) gData = Math.abs(gData - gsvAvg);
+						
 						writer.println(hData+","+gData);
 					}
+					
 					writer.close();
 					
 				} catch (IOException e) {
@@ -240,13 +269,36 @@ public class Window {
 		panel_1.setBounds(12, 151, 476, 1);
 		frame.getContentPane().add(panel_1);
 		
-		JLabel lblNewLabel = new JLabel("Export file");
+		JLabel lblNewLabel = new JLabel("Data to analyse");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setBounds(12, 270, 121, 22);
 		frame.getContentPane().add(lblNewLabel);
 		
 		JButton btnNewButton_2 = new JButton("Choose");
 		btnNewButton_2.setBounds(145, 270, 121, 25);
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				JFileChooser fileChooser = new JFileChooser();
+				if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+					File file = fileChooser.getSelectedFile();
+					
+					try {
+						data = (new DataHandler()).dataFetch(file);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					System.out.println("GSV data done..");
+					
+				}
+				
+			}
+		});
 		frame.getContentPane().add(btnNewButton_2);
 		
 		JLabel lblPeriod = new JLabel("Duration");

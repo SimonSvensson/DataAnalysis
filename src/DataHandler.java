@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -268,6 +270,59 @@ public List<Double> accelerometerMagnitude(List<String> x, List<String> y, List<
 		}
 		
 		return downsampled;
+		
+	}
+	
+	//General function to read all files. Reads file and converts data to correct format where array position equal to milliseconds
+	public List<Double> dataFetch(File file) throws FileNotFoundException, IOException { 
+		
+		List<String> tempArr = new ArrayList<String>();
+		List<Double> finalArr = new ArrayList<Double>();
+		int sampleRate = 0;
+		int arrayPos = 0;
+		double samplePos = 0;
+		int startRow = 0;
+		
+		//Reads the correct parameters to handle file (BVP)
+		if(file.getName().contains("BVP")){
+			tempArr = (new FileHandler()).getColumn(file, 0);	
+			sampleRate = (int) Double.parseDouble(tempArr.get(1));
+			startRow = 2;
+		}
+		
+		//Reads the correct parameters to handle file (EDA)
+		if(file.getName().contains("EDA")){
+			tempArr = (new FileHandler()).getColumn(file, 0);	
+			sampleRate = (int) Double.parseDouble(tempArr.get(1));
+			startRow = 3;
+		}
+		
+		//Reads the correct parameters to handle file (HR)
+		if(file.getName().contains("HR")){
+			tempArr = (new FileHandler()).getColumn(file, 0);	
+			sampleRate = (int) Double.parseDouble(tempArr.get(1));
+			startRow = 2;
+		}
+		
+		//Converts string to double and to correct format
+		int i = startRow;
+		while (i < tempArr.size()) {
+			
+			if (arrayPos == (int) samplePos) {
+				finalArr.add(Double.parseDouble(tempArr.get(i)));
+				samplePos+=1000.0/sampleRate;
+				i++;
+			} else {
+				finalArr.add(null);
+			}
+			
+			arrayPos++;
+			
+		}
+		
+		for (int a = 0; a < finalArr.size(); a++) System.out.println(finalArr.get(a));
+
+		return finalArr;
 		
 	}
 
