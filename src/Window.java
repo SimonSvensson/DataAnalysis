@@ -1,35 +1,22 @@
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import java.awt.GridBagLayout;
 import javax.swing.JLabel;
-import java.awt.GridBagConstraints;
-import java.awt.GridLayout;
-import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
-import java.awt.Insets;
-import javax.swing.JToolBar;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.FlowLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.SwingConstants;
-import java.awt.Canvas;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import java.awt.Color;
 import javax.swing.JCheckBox;
-
 
 public class Window {
 
@@ -37,12 +24,15 @@ public class Window {
 	private JTextField textField;
 	private JTextField textField_1;
 	
-	private FileHandler fileHandler;
 	private JTextField textField_2;
 	private JTextField textField_3;
 	
-	List<Double> gsvData = new ArrayList<Double>();
+	List<Double> gsrData = new ArrayList<Double>();
 	List<Double> headsetData = new ArrayList<Double>();
+
+	//The data that is to be analyzed
+	List<Double> data = new ArrayList<Double>();
+	
 	private JTextField txtS;
 	private JTextField txtS_1;
 	private JTextField txtS_2;
@@ -50,6 +40,8 @@ public class Window {
 	private JTextField textField_5;
 	private JTextField textField_6;
 	private JTextField textField_7;
+	
+	int offset = 0;
 
 	/**
 	 * Launch the application.
@@ -80,7 +72,7 @@ public class Window {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 1214, 871);
+		frame.setBounds(100, 100, 1214, 560);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -107,7 +99,7 @@ public class Window {
 						e.printStackTrace();
 					}
 					
-					System.out.println("Headset data done..");
+					System.out.println("Headset data read...");
 					
 				}
 				
@@ -116,8 +108,8 @@ public class Window {
 		btnNewButton.setBounds(12, 76, 121, 25);
 		frame.getContentPane().add(btnNewButton);
 		
-		JButton btnGsvFile = new JButton("GSV File");
-		btnGsvFile.addActionListener(new ActionListener() {
+		JButton btnGSRFile = new JButton("GSR File");
+		btnGSRFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				JFileChooser fileChooser = new JFileChooser();
@@ -125,7 +117,7 @@ public class Window {
 					File file = fileChooser.getSelectedFile();
 					
 					try {
-						gsvData = (new DataHandler()).accMag(file, Integer.parseInt(textField_3.getText()), Integer.parseInt(textField_1.getText()));
+						gsrData = (new DataHandler()).accMag(file, Integer.parseInt(textField_3.getText()), Integer.parseInt(textField_1.getText()));
 					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -134,14 +126,14 @@ public class Window {
 						e.printStackTrace();
 					}
 					
-					System.out.println("GSV data done..");
+					System.out.println("GSR data read...");
 					
 				}
 				
 			}
 		});
-		btnGsvFile.setBounds(12, 113, 121, 25);
-		frame.getContentPane().add(btnGsvFile);
+		btnGSRFile.setBounds(12, 113, 121, 25);
+		frame.getContentPane().add(btnGSRFile);
 		
 		JLabel lblSampleRate = new JLabel("Sample rate");
 		lblSampleRate.setHorizontalAlignment(SwingConstants.CENTER);
@@ -173,34 +165,41 @@ public class Window {
 		JButton btnNewButton_1 = new JButton("Calculate");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+	
+				//StepLength 5000 = 5 sek
+				int stepLength = 5000;
 				
-				File file = new File("C:/Users/Rasmus Lindahl/Desktop/data.csv");
+				//Extracts features from data
+				List<Double> extractedHead = (new DataHandler()).extract(headsetData, stepLength);
+				List<Double> extractedGSR = (new DataHandler()).extract(gsrData, stepLength);
+				
+				int headStart = 0;
+				int gsrStart = 0;
+				
+				//Finds start moving point for both devices and updates offset value
 				try {
-					
-					boolean result = Files.deleteIfExists(file.toPath());
-					
-					PrintWriter writer = new PrintWriter(file, "UTF-8");
-					for (int i = 0; i < 50000; i++) {
-						
-						Double hData = headsetData.get(i);
-						Double gData = gsvData.get(i);
-						
-						writer.println(hData+","+gData);
-					}
-					writer.close();
-					
+					headStart = (new DataHandler()).findStartMove(extractedHead, 10, 0.6, stepLength);
+					gsrStart = (new DataHandler()).findStartMove(extractedGSR, 10, 0.8, stepLength);
+					System.out.println("Found critical extracted index for headset at: " + headStart + " and for gsr at: " + gsrStart);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
-				System.out.println("Writing data done..");
+				//Updates offset
+				offset = gsrStart - headStart;
+				lblOffset.setText("Offset: " + offset/1000.0 + " s");
 				
+				//Test the export data function
 				try {
-					
-					double offset = (new DataHandler()).calcOffset(headsetData, gsvData);
-					lblOffset.setText(lblOffset.getText() + offset);
-					
+					String path = "C:/Users/Rasmus Lindahl/Desktop/";
+					String fileName = "test.csv";
+					(new FileHandler()).deleteFile(path, fileName);
+					(new FileHandler()).exportData(extractedHead, path, fileName, 0);
+					(new FileHandler()).exportData(extractedGSR, path, fileName, 1);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -240,49 +239,70 @@ public class Window {
 		panel_1.setBounds(12, 151, 476, 1);
 		frame.getContentPane().add(panel_1);
 		
-		JLabel lblNewLabel = new JLabel("Export file");
+		JLabel lblNewLabel = new JLabel("Data to analyse");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(12, 270, 121, 22);
+		lblNewLabel.setBounds(12, 269, 121, 22);
 		frame.getContentPane().add(lblNewLabel);
 		
 		JButton btnNewButton_2 = new JButton("Choose");
-		btnNewButton_2.setBounds(145, 270, 121, 25);
+		btnNewButton_2.setBounds(145, 269, 121, 25);
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				JFileChooser fileChooser = new JFileChooser();
+				if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+					File file = fileChooser.getSelectedFile();
+					
+					try {
+						data = (new DataHandler()).dataFetch(file);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+				
+			}
+		});
 		frame.getContentPane().add(btnNewButton_2);
 		
 		JLabel lblPeriod = new JLabel("Duration");
 		lblPeriod.setHorizontalAlignment(SwingConstants.CENTER);
-		lblPeriod.setBounds(12, 198, 121, 25);
+		lblPeriod.setBounds(12, 197, 121, 25);
 		frame.getContentPane().add(lblPeriod);
 		
 		txtS = new JTextField();
 		txtS.setHorizontalAlignment(SwingConstants.CENTER);
-		txtS.setText("10 s");
-		txtS.setBounds(145, 197, 121, 25);
+		txtS.setText("00:00:10");
+		txtS.setBounds(145, 196, 121, 25);
 		frame.getContentPane().add(txtS);
 		txtS.setColumns(10);
 		
 		JLabel lblTo = new JLabel("to");
 		lblTo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTo.setBounds(272, 198, 93, 25);
+		lblTo.setBounds(272, 197, 93, 25);
 		frame.getContentPane().add(lblTo);
 		
 		txtS_1 = new JTextField();
-		txtS_1.setText("100 s");
+		txtS_1.setText("00:01:00");
 		txtS_1.setHorizontalAlignment(SwingConstants.CENTER);
 		txtS_1.setColumns(10);
-		txtS_1.setBounds(367, 197, 121, 25);
+		txtS_1.setBounds(367, 196, 121, 25);
 		frame.getContentPane().add(txtS_1);
 		
 		JLabel lblChunkSize = new JLabel("Chunk Size");
 		lblChunkSize.setHorizontalAlignment(SwingConstants.CENTER);
-		lblChunkSize.setBounds(12, 233, 121, 25);
+		lblChunkSize.setBounds(12, 232, 121, 25);
 		frame.getContentPane().add(lblChunkSize);
 		
 		txtS_2 = new JTextField();
-		txtS_2.setText("10 s");
+		txtS_2.setText("00:00:05");
 		txtS_2.setHorizontalAlignment(SwingConstants.CENTER);
 		txtS_2.setColumns(10);
-		txtS_2.setBounds(145, 237, 121, 25);
+		txtS_2.setBounds(145, 236, 121, 25);
 		frame.getContentPane().add(txtS_2);
 		
 		JPanel panel_2 = new JPanel();
@@ -292,12 +312,12 @@ public class Window {
 		
 		JLabel lblExportSettings = new JLabel("Export Settings");
 		lblExportSettings.setHorizontalAlignment(SwingConstants.CENTER);
-		lblExportSettings.setBounds(12, 307, 476, 22);
+		lblExportSettings.setBounds(12, 313, 476, 22);
 		frame.getContentPane().add(lblExportSettings);
 		
-		JLabel lblFileInput = new JLabel("File input");
+		JLabel lblFileInput = new JLabel("Timing");
 		lblFileInput.setHorizontalAlignment(SwingConstants.CENTER);
-		lblFileInput.setBounds(12, 164, 476, 22);
+		lblFileInput.setBounds(12, 159, 476, 22);
 		frame.getContentPane().add(lblFileInput);
 		
 		JCheckBox chckbxNewCheckBox = new JCheckBox("Average");
@@ -363,7 +383,7 @@ public class Window {
 		frame.getContentPane().add(textField_7);
 		
 		JButton btnExportData = new JButton("Export Data");
-		btnExportData.setBounds(903, 426, 253, 43);
+		btnExportData.setBounds(903, 420, 253, 43);
 		frame.getContentPane().add(btnExportData);
 	}
 }
